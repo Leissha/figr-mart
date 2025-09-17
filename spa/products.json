@@ -1,0 +1,28 @@
+[
+  { "id": 1, "name": "Dimoo Cloud", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo1.jpg" },
+  { "id": 2, "name": "Dimoo Sun", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo2.jpg" },
+  { "id": 3, "name": "Dimoo Rain", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo3.jpg" },
+  { "id": 4, "name": "Dimoo Snow", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo4.jpg" },
+  { "id": 5, "name": "Dimoo Storm", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo5.jpg" },
+  { "id": 6, "name": "Dimoo Wind", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo6.jpg" },
+  { "id": 7, "name": "Dimoo Fog", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo7.jpg" },
+  { "id": 8, "name": "Dimoo Rainbow", "price": 15.0, "type": "Dimoo", "image": "../../D6.2/assets/dimoo/dimoo8.jpg" },
+  { "id": 9, "name": "Skullpanda Paradox A", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda1.jpg" },
+  { "id": 10, "name": "Skullpanda Paradox B", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda2.jpg" },
+  { "id": 11, "name": "Skullpanda Paradox C", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda3.jpg" },
+  { "id": 12, "name": "Skullpanda Paradox D", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda4.jpg" },
+  { "id": 13, "name": "Skullpanda Paradox E", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda5.jpg" },
+  { "id": 14, "name": "Skullpanda Paradox F", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda6.jpg" },
+  { "id": 15, "name": "Skullpanda Paradox G", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda7.jpg" },
+  { "id": 16, "name": "Skullpanda Paradox H", "price": 18.0, "type": "Skullpanda", "image": "../../D6.2/assets/skullpanda/skullpanda8.jpg" },
+  { "id": 17, "name": "Hirono Classic", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono1.jpg" },
+  { "id": 18, "name": "Hirono Modern", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono2.jpg" },
+  { "id": 19, "name": "Hirono Vintage", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono3.jpg" },
+  { "id": 20, "name": "Hirono Retro", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono4.jpg" },
+  { "id": 21, "name": "Hirono Future", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono5.jpg" },
+  { "id": 22, "name": "Hirono Space", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono6.jpg" },
+  { "id": 23, "name": "Hirono Ocean", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono7.jpg" },
+  { "id": 24, "name": "Hirono Forest", "price": 22.0, "type": "Hirono", "image": "../../D6.2/assets/hirono/hirono8.jpg" }
+]
+
+
