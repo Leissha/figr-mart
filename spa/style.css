@@ -1,0 +1,56 @@
+/* 
+Color schema: Primary = pink; Dark theme base = black 
+Source:       https://getbootstrap.com/docs/5.3/customize/color-modes/
+*/
+:root[data-bs-theme="dark"]{
+  --bs-body-bg:#141414 !important;
+  --bs-body-color:#EDEDED;
+  --bs-heading-color:#EDEDED;
+  --bs-secondary-color:#ADADAD;     
+  --bs-primary:#FF1FD6;
+  --bs-primary-rgb:255,31,214;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 1rem 7.5% !important;
+  padding: 0 !important;
+  background-color: #141414 !important;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Set text-primary links to pink color */
+a.text-primary {
+  color: #FF1FD6 !important;
+}
+
+a.text-primary:hover {
+  color: #E01BC2 !important;
+}
+
+/* Sticky Footer */
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#app {
+  flex: 1;
+}
+
+footer {
+  margin-top: auto;
+}

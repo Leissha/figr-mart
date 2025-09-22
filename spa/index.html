@@ -9,431 +9,139 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-  <style>
-    /* 
-    Color schema: Primary = pink; Dark theme base = black 
-    Source:       https://getbootstrap.com/docs/5.3/customize/color-modes/
-    */
-        :root{
-          --bs-primary:#FF1FD6;           /* pink */
-          --bs-primary-rgb:255,31,214;     /* for focus shadows etc */
-          --bs-secondary: #000000;         /* black */
-          
-          --color-contrast-1: #FFFFFF;  /* white text on dark bg */
-          --color-contrast-2: #1a1a1a;  /* dark gray for inputs */
-        }
-    /* ensure buttons use the pink immediately */
-    .btn-primary{
-      --bs-btn-bg:var(--bs-primary);
-      --bs-btn-border-color:var(--bs-primary);
-      --bs-btn-hover-bg:var(--bs-primary);
-      --bs-btn-disabled-bg: var(--bs-primary);
-      --bs-btn-disabled-border-color: var(--bs-primary);
-    }
-    .btn-outline-primary{
-      --bs-btn-color:var(--bs-primary);
-      --bs-btn-border-color:var(--bs-primary);
-      --bs-btn-hover-bg:var(--bs-primary);
-      --bs-btn-hover-border-color:var(--bs-primary);
-      --bs-btn-disabled-bg: var(--bs-primary);
-      --bs-btn-disabled-border-color: var(--bs-primary);
-    }
-    .btn-secondary{
-      --bs-btn-bg:var(--bs-secondary);
-      --bs-btn-hover-bg:var(--bs-secondary);
-      --bs-btn-color:var(--color-contrast-1);
-      --bs-btn-border-color:var(--bs-secondary);
-    }
-    .btn-outline-secondary{
-      --bs-btn-border-color:var(--bs-secondary);
-      --bs-btn-hover-bg:var(--bs-secondary);
-      --bs-btn-hover-border-color:var(--bs-secondary);
-      --bs-btn-color:var(--color-contrast-1);
-    }
-    /* Bootstrap dark theme base colors */
-    [data-bs-theme="dark"]{
-      --bs-body-bg:#141414;               /* black background */
-      --bs-body-color:#EDEDED;         /* light text */
-      --bs-border-color:#3A3A3A;
-    }
-
-    /* Form control styling (applies to all .form-control) */
-    .form-control{
-      background-color: var(--color-contrast-2) !important;
-      color: var(--color-contrast-1) !important;
-    }
-    .form-control:focus{ 
-      background-color: var(--color-contrast-2) !important; 
-      color: var(--color-contrast-1) !important; 
-      box-shadow: none !important; 
-    }
-        .form-control::placeholder{ color: var(--color-contrast-2) !important; }
-        
-        /* HD6.3: Reusable button component styling */
-        .btn-component {
-          height: 38px;
-          min-width: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        
-        }
-      </style>
+  <!-- Vuetify for external form components -->
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.14/dist/vuetify.min.css" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
-<body data-bs-theme="dark" class="p-3">
-  <div id="app" class="container">
-    <!-- Nav / State toggles -->
-    <div class="row mb-3">
-      <div class="d-flex justify-content-between">
-        <h2 @click="currentView='home'">
-          <img src="logo.svg" alt="FIGR" class="me-2 mb-1" style="width: 22px; height: 22px;">FIGR
-        </h2>
-        
-        <div class="d-flex gap-2 align-items-center">          
-          <!-- HD6.3: User authentication UI - Reusable button components -->
-          <button v-if="!isLoggedIn" type="button" class="btn btn-outline-secondary btn-component" @click="currentView='login'">
-            <i class="bi bi-person me-1"></i> Login
-          </button>
-          <button v-if="isLoggedIn" type="button" class="btn btn-outline-primary btn-component" @click="currentView='profile'">
-            <i class="bi bi-heart me-1"></i> Wishlist
-          </button>
-          <button v-if="isLoggedIn" type="button" class="btn btn-outline-secondary btn-component" @click="logout">
-            <i class="bi bi-box-arrow-right me-1"></i> Logout
-          </button>
+<body data-bs-theme="dark">
+  <div id="app" class="container-fluid">
+    <!-- 
+      I want this index.html to be the orchestrated file calling the components.
+      The page will show high-level workflow for bigger picture of the app.
+      Ref: https://vuejs.org/guide/essentials/component-basics.html 
+    -->
+    <v-app>
+    <!-- Header with navigation -->
+    <header class="mb-2">
+      <nav-bar 
+        :is-logged-in="isLoggedIn" 
+        :cart-count="cartCount"
+        @go-to-home="currentView='home'"
+        @go-to-profile="currentView='profile'"
+        @go-to-login="currentView='login'"
+        @go-to-cart="currentView='cart'"
+        @logout="logout">
+      </nav-bar>
+    </header>
 
-          <button type="button" class="btn btn-outline-primary position-relative btn-component" @click="currentView='cart'">
-            <i class="bi bi-cart me-1"></i> Cart
-            <span class="badge bg-primary ms-1">{{ cartCount }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Main content -->
+    <main id="main">
+      <!-- Home View -->
+      <home-view 
+        v-if="currentView==='home'"
+        :products="products"
+        :filters="filters"
+        :sort-order="sortOrder"
+        :categories="categories"
+        :is-logged-in="isLoggedIn"
+        :user="user"
+        @add-to-cart="add"
+        @update-filters="updateFilters"
+        @update-sort-order="updateSortOrder">
+      </home-view>
+  
+      <!-- Cart View -->
+      <cart-view 
+        v-if="currentView==='cart'"
+        :cart="cart"
+        :total="total"
+        :gst="gst"
+        :grand-total="grandTotal"
+        :is-logged-in="isLoggedIn"
+        :can-checkout="canCheckout"
+        @inc-qty="incQty"
+        @dec-qty="decQty"
+        @remove-item="remove"
+        @go-to-checkout="goToCheckout">
+      </cart-view>
 
-    <!-- Home -->
-    <div v-if="currentView==='home'">
-      <!-- Title / Series -->
-      <div class="row">
-        <div class="col-6 my-auto">
-          <h1>SKULLPANDA you found me! series</h1>
-          
-          <!-- Search -->
-          <div class="row mt-5">
-            <div class="col-12 col-md-10 col-lg-8">
-              <label for="home-q" class="form-label">Search product</label>
-              <input id="home-q" type="text" class="form-control" placeholder="Search your fav character..." v-model="filters.q" v-focus>
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
-          <img src="assets/skullpanda/skullpanda8.jpg" class="img-fluid"></img>
-        </div>
-      </div>
+      <!-- Login View -->
+      <login-view 
+        v-if="currentView==='login'"
+        :login-form="loginForm"
+        @login="login"
+        @go-to-home="goToHome"
+        @go-to-register="goToRegister">
+      </login-view>
 
-      <!-- Greeting -->
-      <div v-if="isLoggedIn" class="row mb-3">
-        <div class="col-12">
-          <strong>Hello, {{ user.name }}!</strong>
-        </div>
-      </div>
+      <!-- Register View -->
+      <register-view 
+        v-if="currentView==='register'"
+        :register-form="registerForm"
+        :valid="valid"
+        :first-name-rules="firstNameRules"
+        :last-name-rules="lastNameRules"
+        :email-rules="emailRules"
+        :username-rules="usernameRules"
+        :password-rules="passwordRules"
+        :confirm-password-rules-computed="confirmPasswordRulesComputed"
+        @register="register"
+        @go-to-home="goToHome"
+        @go-to-login="goToLogin">
+      </register-view>
 
-      <!-- Type chips -->
-      <div class="row mb-3">
-        <div class="col-12 d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-sm border-0" :class="{'btn-secondary':filters.type==='All','btn-outline-secondary':filters.type!=='All'}" v-on:click="filters.type='All'">All</button>
-          <button type="button" class="btn btn-sm border-0" :class="{'btn-secondary':filters.type==='Skullpanda','btn-outline-secondary':filters.type!=='Skullpanda'}" v-on:click="filters.type='Skullpanda'">Skullpanda</button>
-          <button type="button" class="btn btn-sm border-0" :class="{'btn-secondary':filters.type==='Hirono','btn-outline-secondary':filters.type!=='Hirono'}" v-on:click="filters.type='Hirono'">Hirono</button>
-          <button type="button" class="btn btn-sm border-0" :class="{'btn-secondary':filters.type==='Dimoo','btn-outline-secondary':filters.type!=='Dimoo'}" v-on:click="filters.type='Dimoo'">Dimoo</button>
-          
-          <!-- HD6.3 - Ref: P3.2 Price sort selector -->
-          <div class="ms-auto d-flex align-items-center">
-            <select id="sortSelect" class="form-select form-select-sm" style="width: auto;" v-model="sortOrder">
-              <option value="normal"><i class="bi bi-filter"></i> Sort by price</option>
-              <option value="high-to-low">High to Low</option>
-              <option value="low-to-high">Low to High</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <!-- Profile View -->
+      <profile-view 
+        v-if="currentView==='profile'"
+        :user="user"
+        :order-history="orderHistory">
+      </profile-view>
 
-      <!-- Product grid (flat list from filtered) -->
-      <div class="row g-3">
-        <div class="col-6 col-lg-3" v-for="p in filtered" :key="'home-'+p.id">
-          <div class="card-box flex-column">
-            <div class="mb-2">
-              <div class="ratio ratio-1x1">
-                <img v-if="p.image" :src="p.image" :alt="p.name" class="w-100 h-100 object-fit-cover rounded">
-              </div>
-            </div>
-            <div class="fw-semibold mb-1">{{ p.name }}</div>
-            <div class="text-muted mb-2">{{ p.price | currency }}</div>
-            <div class="btn-group btn-group-sm w-100 mt-auto">
-              <button class="btn btn-primary" v-on:click="add(p)">Add to Cart</button>
-              <button v-if="isLoggedIn" class="btn btn-outline-primary" @click="toggleWishlist(p)" :title="isInWishlist(p.id) ? 'Remove from Wishlist' : 'Add to Wishlist'">
-                <i class="bi" :class="isInWishlist(p.id) ? 'bi-heart-fill' : 'bi-heart'"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-      
-    <!-- Cart Ref: P5.1 Lab post add/remove-->
-    <div v-if="currentView==='cart'">
-      <div class="row g-3">
-        <div class="col-12 col-lg-8">
-          <div class="table-responsive">
-            <table class="table table-dark align-middle">
-              <caption class="text-secondary">Shopping cart items</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Product</th>
-                  <th scope="col">Qty</th>
-                  <th scope="col" class="text-end">Unit</th>
-                  <th scope="col" class="text-end">Subtotal</th>
-                  <th scope="col">Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="cart.length===0"><td colspan="5" class="text-muted">Your cart is empty.</td></tr>
-                <tr v-for="(c,i) in cart" :key="c.id">
-                  <td>{{ c.name }}</td>
-                  <!-- Ref: C3.3 compute -->
-                  <td>
-                    <div class="btn-group btn-group-sm" role="group">
-                      <button class="btn btn-outline-primary" :disabled="c.qty<=1" v-on:click="decQty(i)">−</button>
-                      <span class="btn btn-dark disabled">{{ c.qty }}</span>
-                      <button class="btn btn-outline-primary" v-on:click="incQty(i)">+</button>
-                    </div>
-                  </td>
-                  <td>{{ c.price | currency }}</td>
-                  <td>{{ (c.price*c.qty) | currency }}</td>
-                  <td><button class="btn btn-sm btn-outline-primary" v-on:click="remove(i)">Remove</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="col-12 col-lg-4">
-          <div class="card-box">
-            <div class="d-flex justify-content-between"><span>Subtotal</span><span class="fw-semibold">{{ total | currency }}</span></div>
-            <div class="d-flex justify-content-between"><span>GST (10%)</span><span class="fw-semibold">{{ gst | currency }}</span></div>
-            <hr>
-            <div class="d-flex justify-content-between fw-bold"><span>Total</span><span>{{ grandTotal | currency }}</span></div>
-            <button class="btn btn-primary w-100 mt-3" :disabled="!canCheckout" v-on:click="processOrder">
-              {{ isLoggedIn ? 'Complete Order' : 'Please login to Checkout' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-      <!-- Login Ref: HD6.3 user authentication -->
-      <div v-if="currentView==='login'">
-        <div class="row justify-content-center">
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="card-box">
-              <h5 class="text-center mb-4">Login</h5>
-              <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input id="username" type="text" class="form-control" v-model="loginForm.username" placeholder="Enter username">
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input id="password" type="password" class="form-control" v-model="loginForm.password" placeholder="Enter password">
-              </div>
-              <div class="d-grid gap-2">
-                <button type="button" class="btn btn-primary" @click="login">Login</button>
-                <button type="button" class="btn btn-outline-secondary" @click="currentView='home'">Cancel</button>
-              </div>
-              <div class="mt-3 text-center">
-                <small class="text-muted">Don't have an account? </small>
-                <a href="#" @click.prevent="currentView='register'" class="text-primary text-decoration-none">Create Account</a>
-              </div>
-              <div class="mt-2 text-center">
-                <small class="text-muted">Demo: Enter any username and password</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Registration Ref: HD6.3 user registration system -->
-      <div v-if="currentView==='register'">
-        <div class="row justify-content-center">
-          <div class="col-12 col-md-8 col-lg-6">
-            <div class="card-box">
-              <h5 class="text-center mb-4">Create Account</h5>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="regFirstName" class="form-label">First Name</label>
-                  <input id="regFirstName" type="text" class="form-control" :class="{'is-valid': isFirstNameValid, 'is-invalid': registerForm.firstName && !isFirstNameValid}" v-model="registerForm.firstName" placeholder="First name">
-                  <div v-if="registerForm.firstName && !isFirstNameValid" class="invalid-feedback">First name is required</div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="regLastName" class="form-label">Last Name</label>
-                  <input id="regLastName" type="text" class="form-control" :class="{'is-valid': isLastNameValid, 'is-invalid': registerForm.lastName && !isLastNameValid}" v-model="registerForm.lastName" placeholder="Last name">
-                  <div v-if="registerForm.lastName && !isLastNameValid" class="invalid-feedback">Last name is required</div>
-                </div>
-              </div>
-              <div class="mb-3">
-                <label for="regEmail" class="form-label">Email</label>
-                <input id="regEmail" type="email" class="form-control" :class="{'is-valid': isEmailValid, 'is-invalid': registerForm.email && !isEmailValid}" v-model="registerForm.email" placeholder="Enter email">
-                <div v-if="registerForm.email && !isEmailValid" class="invalid-feedback">Please enter a valid email address</div>
-              </div>
-              <div class="mb-3">
-                <label for="regUsername" class="form-label">Username</label>
-                <input id="regUsername" type="text" class="form-control" :class="{'is-valid': isUsernameValid, 'is-invalid': registerForm.username && !isUsernameValid}" v-model="registerForm.username" @input="checkUsername" placeholder="Choose username">
-                <div v-if="usernameExists" class="invalid-feedback">Username already exists</div>
-                <div v-else-if="registerForm.username && !isUsernameValid" class="invalid-feedback">Username is required</div>
-              </div>
-              <div class="mb-3">
-                <label for="regPassword" class="form-label">Password</label>
-                <input id="regPassword" type="password" class="form-control" :class="{'is-valid': isPasswordValid, 'is-invalid': registerForm.password && !isPasswordValid}" v-model="registerForm.password" placeholder="Create password">
-                <div v-if="registerForm.password && !isPasswordValid" class="invalid-feedback">Password must be at least 6 characters</div>
-              </div>
-              <div class="mb-3">
-                <label for="regConfirmPassword" class="form-label">Confirm Password</label>
-                <input id="regConfirmPassword" type="password" class="form-control" :class="{'is-valid': isConfirmPasswordValid, 'is-invalid': registerForm.confirmPassword && !isConfirmPasswordValid}" v-model="registerForm.confirmPassword" placeholder="Confirm password">
-                <div v-if="registerForm.confirmPassword && !isConfirmPasswordValid" class="invalid-feedback">Passwords do not match</div>
-              </div>
-              <div class="d-grid gap-2">
-                <button type="button" class="btn btn-primary" :disabled="!isRegisterValid" @click="register">Create Account</button>
-                <button type="button" class="btn btn-outline-secondary" @click="currentView='home'">Cancel</button>
-              </div>
-              <div class="mt-3 text-center">
-                <small class="text-muted">Already have an account? </small>
-                <a href="#" @click.prevent="currentView='login'" class="text-primary text-decoration-none">Login</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Profile/Wishlist Ref: HD6.3 user profile and wishlist -->
-      <div v-if="currentView==='profile'">
-        <div class="row">
-          <div class="col-12">
-            <h4 class="mb-4">Welcome, {{ user.name }}!</h4>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="card-box">
-                  <h6 class="card-title">Account Information</h6>
-                  <p><strong>Username:</strong> {{ user.username }}</p>
-                  <p><strong>Email:</strong> {{ user.email }}</p>
-                  <p><strong>Member since:</strong> {{ formatDate(user.registrationDate) }}</p>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="card-box">
-                  <h6 class="card-title">Order History</h6>
-                  <div v-if="orderHistory.length === 0" class="text-muted">No orders yet</div>
-                  <div v-else>
-                    <div v-for="order in orderHistory" :key="order.id" class="border-bottom py-2">
-                      <div class="d-flex justify-content-between">
-                        <span>Order #{{ order.id }}</span>
-                        <span>{{ formatCurrency(order.total) }}</span>
-                      </div>
-                      <small class="text-muted">{{ formatDate(order.date) }}</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row mt-4">
-              <div class="col-12">
-                <div class="card-box">
-                  <h6 class="card-title">My Wishlist</h6>
-                  <div v-if="wishlist.length === 0" class="text-muted">No items in wishlist</div>
-                  <div v-else class="row g-3">
-                    <div class="col-6 col-md-4 col-lg-3" v-for="item in wishlist" :key="'wish-'+item.id">
-                      <div class="card h-100">
-                        <img :src="item.image" class="card-img-top" :alt="item.name" style="height: 200px; object-fit: cover;">
-                        <div class="card-body d-flex flex-column">
-                          <h6 class="card-title">{{ item.name }}</h6>
-                          <p class="card-text text-muted">{{ item.type }}</p>
-                          <div class="mt-auto">
-                            <div class="d-flex justify-content-between align-items-center">
-                              <span class="fw-bold">{{ formatCurrency(item.price) }}</span>
-                              <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary" @click="addToCart(item)">Add to Cart</button>
-                                <button class="btn btn-outline-danger" @click="removeFromWishlist(item.id)">Remove</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <!-- Checkout Ref: C6.1 registration form validation -->
-    <div v-if="currentView==='checkout'">
-      <div class="row g-3">
-        <div class="col-12 col-lg-7">
-          <div class="card-box">
-            <h5>Checkout</h5>
-            <div class="mb-3">
-              <label for="fullName" class="form-label">Full Name</label>
-              <input id="fullName" class="form-control" v-model="form.fullName">
-              <small class="text-danger" v-if="form.fullName && !isFullNameValid">Full name must contain letters/spaces only</small>
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input id="email" type="email" class="form-control" v-model="form.email">
-              <small class="text-danger" v-if="form.email && !isEmailValid">Enter a valid email</small>
-            </div>
-            <div class="mb-3">
-              <label for="mobile" class="form-label">Mobile (04XXXXXXXX)</label>
-              <input id="mobile" class="form-control" v-model="form.mobile" placeholder="04XXXXXXXX">
-              <small class="text-danger" v-if="form.mobile && !isMobileValid">Mobile must start with 04 and be 10 digits</small>
-            </div>
-            <div class="mb-3">
-              <label for="street" class="form-label">Street</label>
-              <input id="street" class="form-control" v-model="form.street">
-            </div>
-            <div class="row g-3">
-              <div class="col-12 col-md-6">
-                <label for="suburb" class="form-label">Suburb</label>
-                <input id="suburb" class="form-control" v-model="form.suburb">
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="postcode" class="form-label">Postcode (4 digits)</label>
-                <input id="postcode" class="form-control" v-model="form.postcode" maxlength="4">
-                <small class="text-danger" v-if="form.postcode && !isPostcodeValid">Postcode must be exactly 4 digits</small>
-              </div>
-            </div>
-            <button class="btn btn-primary mt-3" :disabled="!canSubmit" v-on:click="submitOrder">Submit</button>
-          </div>
-        </div>
-        <div class="col-12 col-lg-5">
-          <div class="card-box">
-            <h5>Order Summary</h5>
-            <ul class="list-unstyled small">
-              <li v-for="c in cart">{{ c.qty }} × {{ c.name }} — {{ (c.price*c.qty) | currency }}</li>
-            </ul>
-            <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ total | currency }}</span></div>
-            <div class="d-flex justify-content-between"><span>GST</span><span>{{ gst | currency }}</span></div>
-            <div class="d-flex justify-content-between fw-semibold"><span>Total</span><span>{{ grandTotal | currency }}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <!-- Checkout View -->
+      <checkout-view 
+        v-if="currentView==='checkout'"
+        :user="user"
+        :cart="cart"
+        :total="total"
+        :gst="gst"
+        :grand-total="grandTotal"
+        @process-order="processOrder"
+        @go-to-cart="goToCart">
+      </checkout-view>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="mt-5 py-3 text-center text-muted">
+      <small>&copy; 2024 FIGR - Pop Mart Collection</small>
+    </footer>
+    </v-app>
   </div>
 
   <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.14/dist/vuetify.min.js"></script>
   <script>
     // D6 formatting filter (display-only)
     Vue.filter('currency', function(n){
       return '$' + Number(n || 0).toFixed(2);
     });
+    
+    // Initialize Vuetify
+    Vue.use(Vuetify);
   </script>
+  <!-- Components (Reusable UI elements) -->
+  <script src="components/custom-button.js"></script>
+  <script src="components/nav-bar.js"></script>
+  
+  <!-- Views (Page-level components) -->
+  <script src="views/home-view.js"></script>
+  <script src="views/cart-view.js"></script>
+  <script src="views/login-view.js"></script>
+  <script src="views/register-view.js"></script>
+  <script src="views/profile-view.js"></script>
+  <script src="views/checkout-view.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
