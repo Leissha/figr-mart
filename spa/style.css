@@ -2,13 +2,21 @@
 Color schema: Primary = pink; Dark theme base = black 
 Source:       https://getbootstrap.com/docs/5.3/customize/color-modes/
 */
-:root[data-bs-theme="dark"]{
+html[data-bs-theme="dark"], [data-bs-theme="dark"]{
   --bs-body-bg:#141414 !important;
   --bs-body-color:#EDEDED;
   --bs-heading-color:#EDEDED;
-  --bs-secondary-color:#ADADAD;     
+  --bs-secondary-color:#ADADAD;
   --bs-primary:#FF1FD6;
   --bs-primary-rgb:255,31,214;
+}
+[data-bs-theme="dark"] .v-application {
+  background-color: var(--bs-body-bg) !important;
+}
+
+[data-bs-theme="dark"] .v-main,
+[data-bs-theme="dark"] .v-main__wrap {
+  background-color: var(--bs-body-bg) !important;
 }
 
 * {
@@ -18,7 +26,7 @@ Source:       https://getbootstrap.com/docs/5.3/customize/color-modes/
 }
 
 body {
-  margin: 1rem 7.5% !important;
+  margin: 0 !important;
   padding: 0 !important;
   background-color: #141414 !important;
 }

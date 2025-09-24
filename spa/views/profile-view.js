@@ -1,15 +1,15 @@
 Vue.component('profile-view', {
   props: ['user', 'orderHistory'],
   methods: {
-    formatDate: function(dateString) {
+    formatDate(dateString) {
       return new Date(dateString).toLocaleDateString();
     },
-    formatCurrency: function(n) {
+    formatCurrency(n) {
       return '$' + Number(n || 0).toFixed(2);
     }
   },
   template: `
-    <div class="row justify-content-center">
+    <div class="row">
       <div class="col-12 col-lg-10 col-xl-8">
         <h4 class="mb-3">Welcome, {{ user.name }}!</h4>
         <div class="row">

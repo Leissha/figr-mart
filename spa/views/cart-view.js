@@ -4,25 +4,25 @@ Vue.component('cart-view', {
   // https://vuejs.org/guide/essentials/component-basics.html
   // https://vuejs.org/guide/components/events
   methods: {
-    incQty: function(i) {
+    incQty(i) {
       this.$emit('inc-qty', i);
     },
-    decQty: function(i) {
+    decQty(i) {
       this.$emit('dec-qty', i);
     },
-    remove: function(i) {
+    remove(i) {
       this.$emit('remove-item', i);
     },
-    goToCheckout: function() {
+    goToCheckout() {
       this.$emit('go-to-checkout');
     },
-    goToLogin: function() {
+    goToLogin() {
       this.$emit('go-to-login');
     }
   },
   template: `
-    <div class="row g-3 justify-content-center">
-      <div class="col-12 col-lg-10 col-xl-8">
+    <div class="row my-8 justify-content-center">
+      <div>
         <div class="table-responsive">
           <table class="table table-dark align-middle table-sm">
             <caption class="text-secondary small">Shopping cart items</caption>
@@ -67,7 +67,6 @@ Vue.component('cart-view', {
           <a href="#" @click.prevent="goToLogin" class="text-primary text-decoration-none">
             Login here
           </a>
-        </div>
         </div>
       </div>
     </div>

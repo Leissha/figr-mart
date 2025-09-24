@@ -1,11 +1,12 @@
 Vue.component('home-view', {
   props: ['products', 'filters', 'sortOrder', 'categories', 'isLoggedIn', 'user'],
+  
   computed: {
     // Ref: P3.2 lookup1 + HD6.3 price sorting - ascending, descending, or shuffle
-    filtered: function() {
+    filtered() {
       var queryLower = this.filters.q.toLowerCase();
       var activeType = this.filters.type;
-      var filtered = this.products.filter(function(p) {
+      var filtered = this.products.filter((p) => {
         var isTypeMatch = (activeType === 'All') || (p.type === activeType);
         var isQueryMatch = !queryLower || p.name.toLowerCase().indexOf(queryLower) >= 0;
         return isTypeMatch && isQueryMatch;
@@ -13,27 +14,28 @@ Vue.component('home-view', {
       
       // Sort by user selection
       if (this.sortOrder === 'low-to-high') {
-        return filtered.sort(function(a, b) { return a.price - b.price; });
+        return filtered.sort((a, b) => { return a.price - b.price; });
       } else if (this.sortOrder === 'high-to-low') {
-        return filtered.sort(function(a, b) { return b.price - a.price; });
+        return filtered.sort((a, b) => { return b.price - a.price; });
       } else {
         // normal - shuffle with seed for variety
         return this.shuffleArray(filtered, 42);
       }
     }
   },
+
   methods: {
-    add: function(p) {
+    add(p) {
       this.$emit('add-to-cart', p);
     },
-    updateFilters: function(newFilters) {
+    updateFilters(newFilters) {
       this.$emit('update-filters', newFilters);
     },
-    updateSortOrder: function(newSortOrder) {
+    updateSortOrder(newSortOrder) {
       this.$emit('update-sort-order', newSortOrder);
     },
     // HD6.3: Shuffle array with seed so user can see various products in the same random state (between session)
-    shuffleArray: function(array, seed) {
+    shuffleArray(array, seed) {
       var currentIndex = array.length, temporaryValue, randomIndex;
       var random = this.seededRandom(seed);
       
@@ -49,7 +51,7 @@ Vue.component('home-view', {
       return array;
     },
     // HD6.3: Seeded random number generator
-    seededRandom: function(seed) {
+    seededRandom(seed) {
       var x = Math.sin(seed) * 10000;
       return function() {
         x = Math.sin(x) * 10000;

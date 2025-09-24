@@ -6,7 +6,7 @@ Vue.component('custom-button', {
     variant: {
       type: String,
       default: 'primary-pink',
-      validator: function (value) {
+      validator(value) {
         return ['primary-pink', 'outline-primary-pink', 'secondary-dark', 'outline-secondary-dark'].indexOf(value) !== -1
       }
     },

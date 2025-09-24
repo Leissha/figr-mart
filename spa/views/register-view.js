@@ -1,32 +1,48 @@
 Vue.component('register-view', {
-  props: ['registerForm', 'valid', 'firstNameRules', 'lastNameRules', 'emailRules', 'usernameRules', 'passwordRules', 'confirmPasswordRulesComputed'],
-  data: function() {
+  props: ['firstNameRules', 'lastNameRules', 'emailRules', 'usernameRules', 'passwordRules'],
+  data() {
     return {
-      valid: true
+      valid: false,
+      registerForm: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        username: '',
+        password: '',
+        confirmPassword: ''
+      }
     };
   },
   methods: {
-    register: function() {
+    register() {
       // Validate the form first, then emit (like C6.1 approach)
       if (this.$refs.registerForm.validate()) {
-        this.$emit('register');
-      } else {
-        alert('Please fill in all required fields correctly.');
-      }
+        this.$emit('register', { ...this.registerForm});
+      } 
     },
-    goToHome: function() {
+    goToHome() {
       this.$emit('go-to-home');
     },
-    goToLogin: function() {
+    goToLogin() {
       this.$emit('go-to-login');
     }
   },
+
+  computed: {
+    confirmPasswordRulesComputed() {
+      return [
+        v => !!v || 'Confirm password is required',
+        v => v === this.registerForm.password || 'Passwords must match'
+      ];
+    }
+  },
+
   template: `
     <div class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6">
         <div class="">
           <h5 class="text-center mb-3">Create Account</h5>
-          <v-form ref="registerForm" v-model="valid">
+          <v-form ref="registerForm" v-model="valid" lazy-validation action="http://mercury.swin.edu.au/it000000/formtest.php" autocomplete="off">
             <v-row>
               <v-col cols="12" md="6">
                 <v-text-field
@@ -90,7 +106,7 @@ Vue.component('register-view', {
           </v-form>
           <div class="mt-3 text-center">
             <small class="text-muted">Already have an account? </small>
-            <a href="#" @click.prevent="goToLogin" class="text-decoration-none">Login</a>
+            <a href="#" @click="goToLogin" class="text-decoration-none">Login</a>
           </div>
         </div>
       </div>

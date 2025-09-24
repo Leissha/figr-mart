@@ -1,18 +1,28 @@
 Vue.component('login-view', {
-  props: ['loginForm'],
+  data() {
+    return { 
+      loginForm: { 
+        username: '', 
+        password: '' 
+      }, 
+      valid: false 
+    };
+  },
+
   methods: {
-    login: function() {
-      this.$emit('login');
+    submit() {
+      this.$emit('login', { ...this.loginForm });
     },
-    goToHome: function() {
+    goToHome() {
       this.$emit('go-to-home');
     },
-    goToRegister: function() {
+    goToRegister() {
       this.$emit('go-to-register');
     }
   },
+
   template: `
-    <div class="row justify-content-center">
+    <div class="row my-15 justify-content-center">
       <div class="col-12 col-md-6 col-lg-4">
         <div class="">
           <h5 class="text-center mb-3">Login</h5>
@@ -25,12 +35,12 @@ Vue.component('login-view', {
             <input id="password" type="password" class="form-control" v-model="loginForm.password" placeholder="Enter password">
           </div>
           <div class="d-grid gap-2">
-            <custom-button variant="primary-pink" @click="login">Login</custom-button>
+            <custom-button variant="primary-pink" @click="submit">Login</custom-button>
             <custom-button variant="outline-secondary-dark" @click="goToHome">Cancel</custom-button>
           </div>
           <div class="mt-3 text-center">
             <small class="text-muted">Don't have an account? </small>
-            <a href="#" @click.prevent="goToRegister" class="text-decoration-none">Create Account</a>
+            <a href="#" @click="goToRegister" class="text-decoration-none">Create Account</a>
           </div>
         </div>
       </div>

@@ -1,19 +1,19 @@
 Vue.component('nav-bar', {
   props: ['isLoggedIn', 'cartCount'],
   methods: {
-    goToHome: function() {
+    goToHome() {
       this.$emit('go-to-home');
     },
-    goToProfile: function() {
+    goToProfile() {
       this.$emit('go-to-profile');
     },
-    goToLogin: function() {
+    goToLogin() {
       this.$emit('go-to-login');
     },
-    goToCart: function() {
+    goToCart() {
       this.$emit('go-to-cart');
     },
-    logout: function() {
+    logout() {
       this.$emit('logout');
     }
   },

@@ -1,20 +1,20 @@
 Vue.component('checkout-view', {
   props: ['user', 'cart', 'total', 'gst', 'grandTotal'],
   methods: {
-    processOrder: function() {
+    processOrder() {
       this.$emit('process-order');
     },
-    goToCart: function() {
+    goToCart() {
       this.$emit('go-to-cart');
     },
-    formatCurrency: function(n) {
+    formatCurrency(n) {
       return '$' + Number(n || 0).toFixed(2);
     }
   },
   template: `
-    <div class="row">
-      <div class="col-12">
-        <div class="">
+    <div class="row my-5 justify-content-center">
+      <div class="col-12 col-lg-10 col-xl-8">
+        <div>
           <h5 class="text-center mb-3">Order Confirmation</h5>
           <div class="mb-3">
             <h6>Shipping to:</h6>
@@ -36,7 +36,7 @@ Vue.component('checkout-view', {
             <div class="d-flex justify-content-between fw-bold"><span>Total</span><span>{{ formatCurrency(grandTotal) }}</span></div>
           </div>
           
-          <div class="d-grid gap-2">
+          <div class="d-grid gap-2 col-12 col-md-3 mx-auto">
             <custom-button variant="primary-pink" @click="processOrder" block>Complete Order</custom-button>
             <custom-button variant="outline-secondary-dark" @click="goToCart" block>Back to Cart</custom-button>
           </div>

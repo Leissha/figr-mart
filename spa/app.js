@@ -1,14 +1,3 @@
-// HD6.3: Config constants for price calculations
-var APP_CONFIG = {
-  GST_RATE: 0.10,
-  CURRENCY: '$'
-};
-
-// HD6.3: Custom directive: autofocus on mount
-Vue.directive('focus', {
-  inserted (el) { try { el.focus(); } catch(e){} }
-});
-
 // Initialize Vuetify
 Vue.use(Vuetify);
 const vuetify = new Vuetify({
@@ -27,6 +16,7 @@ const vuetify = new Vuetify({
 new Vue({
   el: '#app',
   vuetify: vuetify,
+
   data: {
     currentView: 'home',
     filters: { q: '', type: 'All' },
@@ -37,16 +27,11 @@ new Vue({
 
     // HD6.3: User authentication
     user: null,
-    loginForm: { username: '', password: '' },
-    // HD6.3: User account registration form & SessionStorage persistence
-    registerForm: { firstName: '', lastName: '', email: '', username: '', password: '', confirmPassword: '' },
+
     users: [], // Store registered users
     orderHistory: [], // Order history
     
-    // Vuetify form validation
-    valid: true,
-    
-    // Validation rules (C6.1 Vuetify form)
+    // C6.1: Vuetify form validation
     firstNameRules: [
       v => !!v || 'First name is required',
       v => /^[A-Za-z\s]+$/.test(v) || 'First name must contain only letters',
@@ -67,25 +52,18 @@ new Vue({
       v => !!v || 'Email is required',
       v => /.+@.+\..+/.test(v) || 'Email must be valid',
     ],
-    confirmPasswordRules: [
-      v => !!v || 'Please confirm your password'
-    ]
   },
   computed: {
-    // Confirm password validation
-    confirmPasswordRulesComputed() {
-      return [
-        v => !!v || 'Please confirm your password',
-        v => v === this.registerForm.password || 'Passwords do not match'
-      ];
-    },
-
     // Ref: C3.3 compute
-    cartCount(){ return this.cart.reduce(function(a,c){return a+c.qty},0); },
-    total(){
-      return this.cart.reduce(function(sum,c){ return sum + c.price*c.qty; }, 0);
+    cartCount() { 
+      return this.cart.reduce((a,c) => {return a+c.qty},0); 
     },
-    gst(){ return this.total * APP_CONFIG.GST_RATE; },
+    total() {
+      return this.cart.reduce((sum,c) => { return sum + c.price*c.qty; }, 0);
+    },
+    gst() { 
+      return this.total * APP_CONFIG.GST_RATE; 
+    },
     grandTotal(){ return this.total + this.gst; },
     
     // HD6.3: User authentication computed
@@ -99,6 +77,7 @@ new Vue({
     goToCheckout() { this.currentView = 'checkout'; },
     goToLogin() { this.currentView = 'login'; },
     goToRegister() { this.currentView = 'register'; },
+    goToProfile() { this.currentView = 'profile'; },
     
     // Filter and sort methods for home-view component
     updateFilters(newFilters) {
@@ -110,26 +89,39 @@ new Vue({
     
     // Ref: P5.1 Lab post add/remove
     add(p){
-      var idx = this.cart.findIndex(function(c){ return c.id===p.id; });
-      if(idx===-1){ this.cart.push({ id:p.id, name:p.name, price:p.price, qty:1 }); }
-      else { this.cart[idx].qty += 1; }
+      var idx = this.cart.findIndex((c) => { return c.id===p.id; });
+      if(idx===-1){
+        this.cart.push({ id:p.id, name:p.name, price:p.price, qty:1 }); 
+      }
+      else{ 
+        this.cart[idx].qty += 1; 
+      }
       this.saveCart();
     },
     
     // Ref: P5.1 Lab post add/remove
-    incQty(i){ this.cart[i].qty += 1; this.saveCart(); },
-    decQty(i){ if(this.cart[i].qty>1) { this.cart[i].qty -= 1; this.saveCart(); } },
-    remove(i){ this.cart.splice(i,1); this.saveCart(); },
+    incQty(i){ 
+      this.cart[i].qty += 1;
+      this.saveCart();
+    },
+    decQty(i){ 
+      if(this.cart[i].qty>1) { 
+        this.cart[i].qty -= 1;
+        this.saveCart();
+      } 
+    },
+    remove(i){ 
+      this.cart.splice(i,1);
+      this.saveCart();
+    },
     
     // HD6.3: 
     // User account with sessionStorage persistence :) 
     // https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage 
-    login(){
-      if (this.loginForm.username && this.loginForm.password) {
+    login(creds){
+      if (creds.username && creds.password) {
         // Check if user exists in registered users
-        var foundUser = this.users.find(function(u_db){ 
-          return u_db.username === this.loginForm.username; 
-        }.bind(this));
+        var foundUser = this.users.find((u_db) =>{ return u_db.username === creds.username;});
         
         if (foundUser) {
           // User exists - create session
@@ -139,8 +131,8 @@ new Vue({
             email: foundUser.email,
             loginTime: new Date().toISOString()
           };
+
           this.saveUser(); // Save current user session
-          this.loginForm = { username: '', password: '' };
           this.currentView = 'home';
         } else {
           alert('Username not found. Please register first.');
@@ -172,18 +164,16 @@ new Vue({
         this.user = JSON.parse(saved);
       }
     },
-
-    // HD6.3: User registration system (ref from C6.1)
-    register(){
-      // Form validation is handled by the component, so we can proceed
-      var newUser = {
+    // HD6.3: C6.1: User account registration form + SessionStorage persistence
+    register(form) {
+      const newUser = {
         id: Date.now(),
-        name: this.registerForm.firstName + ' ' + this.registerForm.lastName,
-        username: this.registerForm.username,
-        email: this.registerForm.email,
+        name: form.firstName + ' ' + form.lastName,
+        username: form.username,
+        email: form.email,
         registrationDate: new Date().toISOString()
       };
-      
+
       // Add new user to user database
       this.users.push(newUser);
       this.saveUsers();
@@ -192,7 +182,7 @@ new Vue({
       this.user = newUser;
       this.saveUser();
       
-      this.registerForm = { firstName: '', lastName: '', email: '', username: '', password: '', confirmPassword: '' };
+      // Task done, move to next view
       this.currentView = 'home';
       alert('Account created successfully!');
     },
@@ -216,7 +206,7 @@ new Vue({
     },
 
     // HD6.3: Generic data persistence 
-    saveToStorage: function(key, data) {
+    saveToStorage(key, data) {
       try { 
         sessionStorage.setItem(key, JSON.stringify(data)); 
       } catch(e) {
@@ -224,7 +214,7 @@ new Vue({
       }
     },
 
-    loadFromStorage: function(key, defaultValue = []) {
+    loadFromStorage(key, defaultValue = []) {
       try {
         var saved = sessionStorage.getItem(key);
         return saved ? JSON.parse(saved) : defaultValue;
@@ -235,21 +225,21 @@ new Vue({
     },
 
     // User database to store & load multiple user accounts (when register)
-    saveUsers: function() { this.saveToStorage('hd6_users', this.users); },
-    loadUsers: function() { this.users = this.loadFromStorage('hd6_users', []); },
+    saveUsers() { this.saveToStorage('hd6_users', this.users); },
+    loadUsers() { this.users = this.loadFromStorage('hd6_users', []); },
     
-    saveOrderHistory: function() { this.saveToStorage('hd6_orders', this.orderHistory); },
-    loadOrderHistory: function() { this.orderHistory = this.loadFromStorage('hd6_orders', []); },
+    saveOrderHistory() { this.saveToStorage('hd6_orders', this.orderHistory); },
+    loadOrderHistory() { this.orderHistory = this.loadFromStorage('hd6_orders', []); },
     
-    saveCart: function() { this.saveToStorage('cart', this.cart); },
-    loadCart: function() { this.cart = this.loadFromStorage('cart', []); }
+    saveCart() { this.saveToStorage('cart', this.cart); },
+    loadCart() { this.cart = this.loadFromStorage('cart', []); }
   },
   
-  // HD6.3: Load all user-related data when app is created
+  // Load all user-related data when app is created
   created(){
     var self = this;
     // Load products from local JSON file
-    fetch('products.json').then(function(r){ return r.json(); }).then(function(list){
+    fetch('products.json').then((r) => { return r.json(); }).then((list) => {
       self.products = list;
     });
     

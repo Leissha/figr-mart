@@ -16,11 +16,19 @@
 </head>
 
 <body data-bs-theme="dark">
-  <div id="app" class="container-fluid">
+  <div id="app" class="container-fluid" style="max-width: 1140px; padding: 16px 24px;">
     <!-- 
       I want this index.html to be the orchestrated file calling the components.
       The page will show high-level workflow for bigger picture of the app.
-      Ref: https://vuejs.org/guide/essentials/component-basics.html 
+      Ref: 
+      Component basics: https://vuejs.org/guide/essentials/component-basics.html 
+
+      Learned and adapted from Week 8 get, post, insert, update SPA
+      I use simple trick for lazy view loading: https://vuejs.org/guide/components/events.html
+      I use currentView var at root app.js to store the state of which view to load using v-if (currentView==='this-view') condition.
+      To have view switching triggered, the component will $emit('go-to-next-view') event (like telling a signal).
+      The root app listens with @go-to-next-view (or v-on) which calls the handler goToNextView() at root app.js and updates the state of the currentView == 'next-view'.
+      This is where v-if comes to handy, we can easily load the corresponding view :).
     -->
     <v-app>
     <!-- Header with navigation -->
@@ -28,16 +36,16 @@
       <nav-bar 
         :is-logged-in="isLoggedIn" 
         :cart-count="cartCount"
-        @go-to-home="currentView='home'"
-        @go-to-profile="currentView='profile'"
-        @go-to-login="currentView='login'"
-        @go-to-cart="currentView='cart'"
+        @go-to-home="goToHome"
+        @go-to-profile="goToProfile"
+        @go-to-login="goToLogin"
+        @go-to-cart="goToCart" 
         @logout="logout">
       </nav-bar>
     </header>
 
     <!-- Main content -->
-    <main id="main">
+    <main id="main" class="my-10 justify-content-center">
       <!-- Home View -->
       <home-view 
         v-if="currentView==='home'"
@@ -64,14 +72,14 @@
         @inc-qty="incQty"
         @dec-qty="decQty"
         @remove-item="remove"
-        @go-to-checkout="goToCheckout">
+        @go-to-checkout="goToCheckout"
+        @go-to-login="goToLogin">
       </cart-view>
 
       <!-- Login View -->
       <login-view 
         v-if="currentView==='login'"
-        :login-form="loginForm"
-        @login="login"
+        @login="login($event)"
         @go-to-home="goToHome"
         @go-to-register="goToRegister">
       </login-view>
@@ -79,15 +87,12 @@
       <!-- Register View -->
       <register-view 
         v-if="currentView==='register'"
-        :register-form="registerForm"
-        :valid="valid"
         :first-name-rules="firstNameRules"
         :last-name-rules="lastNameRules"
         :email-rules="emailRules"
         :username-rules="usernameRules"
         :password-rules="passwordRules"
-        :confirm-password-rules-computed="confirmPasswordRulesComputed"
-        @register="register"
+        @register="register($event)"
         @go-to-home="goToHome"
         @go-to-login="goToLogin">
       </register-view>
@@ -135,7 +140,7 @@
   <script src="components/custom-button.js"></script>
   <script src="components/nav-bar.js"></script>
   
-  <!-- Views (Page-level components) -->
+  <!-- Views (Page components) -->
   <script src="views/home-view.js"></script>
   <script src="views/cart-view.js"></script>
   <script src="views/login-view.js"></script>
