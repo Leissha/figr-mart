@@ -58,9 +58,9 @@ Vue.component('nav-bar', {
           <i class="bi bi-person me-1"></i> Login
         </custom-button>
 
-        <custom-button variant="outline-primary-pink" @click="goToCart" class="position-relative">
+        <custom-button variant="outline-primary-pink" @click="goToCart" class="position-relative" :aria-label="'Cart with ' + cartCount + ' items'">
           <i class="bi bi-heart me-1"></i> Cart
-          <span class="badge ms-1" style="background-color: #FF1FD6; color: white;">{{ cartCount }}</span>
+          <span class="badge ms-1" style="background-color: #FF1FD6; color: white;" aria-live="polite">{{ cartCount }}</span>
         </custom-button>
       </div>
     </div>

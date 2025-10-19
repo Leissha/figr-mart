@@ -16,12 +16,12 @@
 </head>
 
 <body data-bs-theme="dark">
-  <div id="app" class="container-fluid" style="max-width: 1140px; padding: 16px 24px;">
-    <!-- 
+  <div id="app" class="container-fluid d-flex flex-column min-vh-100 app-container">
+    <!--
       I want this index.html to be the orchestrated file calling the components.
       The page will show high-level workflow for bigger picture of the app.
-      Ref: 
-      Component basics: https://vuejs.org/guide/essentials/component-basics.html 
+      Ref:
+      Component basics: https://vuejs.org/guide/essentials/component-basics.html
 
       Learned and adapted from Week 8 get, post, insert, update SPA
       I use simple trick for lazy view loading: https://vuejs.org/guide/components/events.html
@@ -30,7 +30,7 @@
       The root app listens with @go-to-next-view (or v-on) which calls the handler goToNextView() at root app.js and updates the state of the currentView == 'next-view'.
       This is where v-if comes to handy, we can easily load the corresponding view :).
     -->
-    <v-app>
+    <v-app class="d-flex flex-column min-vh-100">
     <!-- Header with navigation -->
     <header class="mb-2">
       <nav-bar 
@@ -45,7 +45,7 @@
     </header>
 
     <!-- Main content -->
-    <main id="main" class="my-10 justify-content-center">
+    <main id="main" class="my-10 justify-content-center flex-grow-1">
       <!-- Home View -->
       <home-view 
         v-if="currentView==='home'"
@@ -55,6 +55,7 @@
         :categories="categories"
         :is-logged-in="isLoggedIn"
         :user="user"
+        :added-to-cart-items="addedToCartItems"
         @add-to-cart="add"
         @update-filters="updateFilters"
         @update-sort-order="updateSortOrder">
@@ -105,20 +106,22 @@
       </profile-view>
 
       <!-- Checkout View -->
-      <checkout-view 
+      <checkout-view
         v-if="currentView==='checkout'"
         :user="user"
         :cart="cart"
         :total="total"
         :gst="gst"
         :grand-total="grandTotal"
+        :is-logged-in="isLoggedIn"
         @process-order="processOrder"
-        @go-to-cart="goToCart">
+        @go-to-cart="goToCart"
+        @go-to-login="goToLogin">
       </checkout-view>
     </main>
     
     <!-- Footer -->
-    <footer class="mt-5 py-3 text-center text-muted">
+    <footer class="my-5 py-3 text-center text-muted">
       <small>&copy; 2024 FIGR - Pop Mart Collection</small>
     </footer>
     </v-app>

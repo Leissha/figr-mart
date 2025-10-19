@@ -2,7 +2,10 @@ Vue.component('profile-view', {
   props: ['user', 'orderHistory'],
   methods: {
     formatDate(dateString) {
-      return new Date(dateString).toLocaleDateString();
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      return date.toLocaleDateString();
     },
     formatCurrency(n) {
       return '$' + Number(n || 0).toFixed(2);

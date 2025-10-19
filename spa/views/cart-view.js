@@ -60,13 +60,16 @@ Vue.component('cart-view', {
           <div class="d-flex justify-content-between small"><span class="text-white">GST (10%)</span><span class="fw-semibold text-white">{{ gst | currency }}</span></div>
           <hr>
           <div class="d-flex justify-content-between fw-bold"><span class="text-white">Total</span><span class="text-white">{{ grandTotal | currency }}</span></div>
-        <div class="d-flex flex-column align-items-center gap-2 mt-8">
-          <custom-button variant="primary-pink" :disabled="!canCheckout" @click="goToCheckout">
-            {{ isLoggedIn ? 'Proceed to Checkout' : 'Please login to Checkout' }}
-          </custom-button>
-          <a href="#" @click.prevent="goToLogin" class="text-primary text-decoration-none">
-            Login here
-          </a>
+
+          <div class="d-flex flex-column align-items-center gap-2 mt-8">
+            <custom-button variant="primary-pink" :disabled="!canCheckout" @click="goToCheckout">
+              {{ isLoggedIn ? 'Proceed to Checkout' : 'Please login to Checkout' }}
+            </custom-button>
+            <!-- Show login link only when not logged in -->
+            <a v-if="!isLoggedIn" href="#" @click.prevent="goToLogin" class="text-primary text-decoration-none">
+              Login here
+            </a>
+          </div>
         </div>
       </div>
     </div>

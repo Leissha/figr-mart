@@ -4,7 +4,7 @@ Source:       https://getbootstrap.com/docs/5.3/customize/color-modes/
 */
 html[data-bs-theme="dark"], [data-bs-theme="dark"]{
   --bs-body-bg:#141414 !important;
-  --bs-body-color:#EDEDED;
+  --bs-body-color:#e4e2e2;
   --bs-heading-color:#EDEDED;
   --bs-secondary-color:#ADADAD;
   --bs-primary:#FF1FD6;
@@ -14,15 +14,17 @@ html[data-bs-theme="dark"], [data-bs-theme="dark"]{
   background-color: var(--bs-body-bg) !important;
 }
 
-[data-bs-theme="dark"] .v-main,
-[data-bs-theme="dark"] .v-main__wrap {
-  background-color: var(--bs-body-bg) !important;
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Cart feedback animation */
+@keyframes pulse-success {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 body {
@@ -34,6 +36,12 @@ body {
 .container-fluid {
   padding-left: 0 !important;
   padding-right: 0 !important;
+}
+
+/* App container padding with responsive padding */
+.app-container {
+  max-width: 1140px;
+  padding: 1rem 2rem !important; 
 }
 
 /* Set text-primary links to pink color */

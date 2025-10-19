@@ -1,5 +1,5 @@
 Vue.component('home-view', {
-  props: ['products', 'filters', 'sortOrder', 'categories', 'isLoggedIn', 'user'],
+  props: ['products', 'filters', 'sortOrder', 'categories', 'isLoggedIn', 'user', 'addedToCartItems'],
   
   computed: {
     // Ref: P3.2 lookup1 + HD6.3 price sorting - ascending, descending, or shuffle
@@ -25,6 +25,9 @@ Vue.component('home-view', {
   },
 
   methods: {
+    isRecentlyAdded(productId) {
+      return this.addedToCartItems && this.addedToCartItems.includes(productId);
+    },
     add(p) {
       this.$emit('add-to-cart', p);
     },
@@ -57,7 +60,7 @@ Vue.component('home-view', {
         x = Math.sin(x) * 10000;
         return x - Math.floor(x);
       };
-    }
+    },
   },
   template: `
     <div>
@@ -110,7 +113,7 @@ Vue.component('home-view', {
       </div>
 
       <!-- Product grid (flat list from filtered) -->
-      <div class="row g-3">
+      <div class="row g-3" aria-live="polite" aria-label="Product search results">
         <div class="col-6 col-lg-3" v-for="p in filtered" :key="'home-'+p.id">
           <div class="flex-column">
             <div class="mb-2">
@@ -120,7 +123,14 @@ Vue.component('home-view', {
             </div>
             <div class="d-flex justify-content-between align-items-center">
               <div class="fw-semibold">{{ p.name }}</div>
-              <custom-button variant="primary-pink" class="mt-2" @click="add(p)" small>Add to Cart</custom-button>
+              <custom-button
+                :variant="isRecentlyAdded(p.id) ? 'success' : 'primary-pink'"
+                class="mt-2"
+                @click="add(p)"
+                small>
+                <i v-if="isRecentlyAdded(p.id)" class="bi bi-check-lg me-1"></i>
+                {{ isRecentlyAdded(p.id) ? 'Added!' : 'Add to Cart' }}
+              </custom-button>
             </div>
             <div class="text-muted">{{ p.price | currency }}</div>
           </div>

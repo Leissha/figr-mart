@@ -35,9 +35,10 @@ Vue.component('login-view', {
             <input id="password" type="password" class="form-control" v-model="loginForm.password" placeholder="Enter password">
           </div>
           <div class="d-grid gap-2">
-            <custom-button variant="primary-pink" @click="submit">Login</custom-button>
+            <custom-button variant="primary-pink" @click="submit" aria-describedby="login-help">Login</custom-button>
             <custom-button variant="outline-secondary-dark" @click="goToHome">Cancel</custom-button>
           </div>
+          <div id="login-help" class="sr-only">Enter your username and password to access your account</div>
           <div class="mt-3 text-center">
             <small class="text-muted">Don't have an account? </small>
             <a href="#" @click="goToRegister" class="text-decoration-none">Create Account</a>

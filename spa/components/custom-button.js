@@ -1,5 +1,5 @@
 // Custom Button Component for FIGR App
-// 4 variants: primary-pink, outline-primary-pink, secondary-dark, outline-secondary-dark
+// 5 variants: primary-pink, outline-primary-pink, secondary-dark, outline-secondary-dark, success
 
 Vue.component('custom-button', {
   props: {
@@ -7,7 +7,7 @@ Vue.component('custom-button', {
       type: String,
       default: 'primary-pink',
       validator(value) {
-        return ['primary-pink', 'outline-primary-pink', 'secondary-dark', 'outline-secondary-dark'].indexOf(value) !== -1
+        return ['primary-pink', 'outline-primary-pink', 'secondary-dark', 'outline-secondary-dark', 'success'].indexOf(value) !== -1
       }
     },
     small: {
@@ -109,6 +109,24 @@ style.textContent = `
 
   .custom-btn--outline-secondary-dark:hover:not(.custom-btn--disabled) {
     background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* 5. Success - Green background for added state */
+  .custom-btn--success {
+    background-color: #28a745;
+    color: white;
+    animation: pulse-success 0.05s ease-in-out;
+    transition: none !important; /* Disable transitions for instant feedback */
+  }
+
+  .custom-btn--success:hover:not(.custom-btn--disabled) {
+    background-color: #218838;
+  }
+
+  @keyframes pulse-success {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
   }
 `
 document.head.appendChild(style)

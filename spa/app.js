@@ -1,3 +1,8 @@
+// Customw directive
+Vue.directive('focus', {
+  inserted (el) { try { el.focus(); } catch(e){} }
+});
+
 // Initialize Vuetify
 Vue.use(Vuetify);
 const vuetify = new Vuetify({
@@ -20,16 +25,19 @@ new Vue({
   data: {
     currentView: 'home',
     filters: { q: '', type: 'All' },
-    sortOrder: 'normal', // HD6.3: sort selector (default to no sorting)
+    sortOrder: 'normal', // sort selector (default to no sorting)
     categories: ['All', 'Skullpanda', 'Hirono', 'Dimoo'], // Category filter options
     products: [],
     cart: [],
 
-    // HD6.3: User authentication
+    // User authentication
     user: null,
 
     users: [], // Store registered users
     orderHistory: [], // Order history
+    
+    // Simple cart feedback - track recently added items
+    addedToCartItems: [],
     
     // C6.1: Vuetify form validation
     firstNameRules: [
@@ -62,11 +70,11 @@ new Vue({
       return this.cart.reduce((sum,c) => { return sum + c.price*c.qty; }, 0);
     },
     gst() { 
-      return this.total * APP_CONFIG.GST_RATE; 
+      return this.total * 0.1; 
     },
     grandTotal(){ return this.total + this.gst; },
     
-    // HD6.3: User authentication computed
+    // User authentication computed
     isLoggedIn(){ return !!this.user; },
     canCheckout(){ return this.isLoggedIn && this.cart.length > 0; },
   },
@@ -97,6 +105,17 @@ new Vue({
         this.cart[idx].qty += 1; 
       }
       this.saveCart();
+      
+      // Simple visual feedback - show tick for 0.2 seconds
+      this.addedToCartItems.push(p.id);
+      this.$forceUpdate(); // Force Vue to re-render
+      setTimeout(() => {
+        const index = this.addedToCartItems.indexOf(p.id);
+        if (index > -1) {
+          this.addedToCartItems.splice(index, 1);
+          this.$forceUpdate(); // Force Vue to re-render
+        }
+      }, 200);
     },
     
     // Ref: P5.1 Lab post add/remove
@@ -115,7 +134,6 @@ new Vue({
       this.saveCart();
     },
     
-    // HD6.3: 
     // User account with sessionStorage persistence :) 
     // https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage 
     login(creds){
@@ -125,10 +143,11 @@ new Vue({
         
         if (foundUser) {
           // User exists - create session
-          this.user = { 
-            username: foundUser.username, 
+          this.user = {
+            username: foundUser.username,
             name: foundUser.name,
             email: foundUser.email,
+            registrationDate: foundUser.registrationDate,
             loginTime: new Date().toISOString()
           };
 
@@ -164,7 +183,7 @@ new Vue({
         this.user = JSON.parse(saved);
       }
     },
-    // HD6.3: C6.1: User account registration form + SessionStorage persistence
+    // C6.1: User account registration form + SessionStorage persistence
     register(form) {
       const newUser = {
         id: Date.now(),
@@ -187,7 +206,7 @@ new Vue({
       alert('Account created successfully!');
     },
 
-    // HD6.3: Order processing
+    // Order processing
     processOrder(){
       if (this.canCheckout) {
         var order = {
@@ -205,7 +224,7 @@ new Vue({
       }
     },
 
-    // HD6.3: Generic data persistence 
+    // Generic data persistence 
     saveToStorage(key, data) {
       try { 
         sessionStorage.setItem(key, JSON.stringify(data)); 
@@ -238,12 +257,18 @@ new Vue({
   // Load all user-related data when app is created
   created(){
     var self = this;
-    // Load products from local JSON file
-    fetch('products.json').then((r) => { return r.json(); }).then((list) => {
+    // Load products from GitHub repository
+    fetch('https://raw.githubusercontent.com/Leissha/popmart-collection/main/products.json').then((r) => { return r.json(); }).then((list) => {
       self.products = list;
+    }).catch((error) => {
+      console.error('Failed to load products from GitHub:', error);
+      // Fallback to local JSON if GitHub fails (Swin cors protection)
+      fetch('products.json').then((r) => { return r.json(); }).then((list) => {
+        self.products = list;
+      });
     });
     
-    // HD6.3: Load all user-related data
+    // Load all user-related data
     this.loadUser();
     this.loadUsers();
     this.loadOrderHistory();
