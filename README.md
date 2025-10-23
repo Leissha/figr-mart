@@ -3,7 +3,7 @@
 A Vue.js-based single-page application for selling collectible figures from the Pop Mart collection.
 
 **Live Demo**: [https://figr-mart.vercel.app/](https://figr-mart.vercel.app/)
-**Code Documentation**: [HD6 Report](report_docs/hd6_report.pdf) 
+**Code Documentation**: [HD6 Report](report_docs/hd6-report.pdf) 
 
 ## Overview
 
